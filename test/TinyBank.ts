@@ -13,15 +13,8 @@ describe("TinyBank", () => {
         myTokenC = await hre.ethers.deployContract("MyToken", [
             "My Token", "MTK", DECIMALS, MINTING_AMOUNT
         ]);
-        const managers = [
-            signers[10].address,
-            signers[11].address,
-            signers[12].address,
-            signers[13].address,
-            signers[14].address
-        ] as [string, string, string, string, string];
 
-        TinyBankC = await hre.ethers.deployContract("TinyBank", [await myTokenC.getAddress(), managers]);
+        TinyBankC = await hre.ethers.deployContract("TinyBank", [await myTokenC.getAddress()]);
         await myTokenC.setManager(await TinyBankC.getAddress());
     });
 
@@ -89,6 +82,7 @@ describe("TinyBank", () => {
         });
     });
 //--------------------------------------------------------------------------------------------------------
+/*
     describe("Multi-Manager Access Control", async () => {
         const newReward = hre.ethers.parseUnits("10", DECIMALS);
         it("should revert when a non-manager tries to confirm", async () => {
@@ -121,6 +115,6 @@ describe("TinyBank", () => {
 
             expect(await TinyBankC.rewardPerBlock()).to.equal(newReward);
         });
-    });
+    });*/
     //--------------------------------------------------------------------------------------------------------
 });

@@ -31,7 +31,7 @@ interface IMyToken {
     function mint(uint256 amount, address owner) external;
 }
 
-contract TinyBank is MultiManagedAccess {
+contract TinyBank is ManagedAccess {
     event Staked(address from, uint256 amount);
     event Withdrawn(uint256 amount, address to);
 
@@ -45,12 +45,12 @@ contract TinyBank is MultiManagedAccess {
     mapping(address => uint256) public staked; //누가 얼마 예치했는지
     uint256 public totalStaked; //전체 예치된 양
 
-    constructor(IMyToken _stakingToken, address[MANAGER_NUMBERS] memory _managers) MultiManagedAccess(msg.sender, _managers) {
+    constructor(IMyToken _stakingToken) ManagedAccess(msg.sender, msg.sender) {
         stakingtoken = _stakingToken;
         rewardPerBlock = defaultRewardPerBlock;
     }   
 
-    function setRewardPerBlock(uint256 _amount) external onlyAllConfirmed {
+    function setRewardPerBlock(uint256 _amount) external onlyManager { /////////////////////////////////////////////////////////////
         rewardPerBlock = _amount;
     }   
 

@@ -6,6 +6,7 @@ pragma solidity ^0.8.28;
 abstract contract MultiManagedAccess {
 
     uint constant MANAGER_NUMBERS = 5;
+    uint immutable BACKUP_MANAGER_NUMBERS;
     address public owner;
     address[MANAGER_NUMBERS] public managers;
     bool[MANAGER_NUMBERS] public confirmed;
@@ -14,7 +15,9 @@ abstract contract MultiManagedAccess {
     // ...
 
 
-    constructor(address _owner, address[MANAGER_NUMBERS] memory _managers) {
+    constructor(address _owner, address[] memory _managers, uint _manager_numbers) {
+        require(_managers.length == _manager_numbers, "size unmatched");
+        BACKUP_MANAGER_NUMBERS = _manager_numbers;
         owner = _owner;
         for (uint256 i = 0; i < MANAGER_NUMBERS; i++) {
             managers[i] = _managers[i];
