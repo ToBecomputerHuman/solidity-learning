@@ -8,15 +8,15 @@ describe("My Token", () => {
     let myTokenC: MyToken;
     let signers: HardhatEthersSigner[];
     beforeEach("Should deploy", async () => {
-        myTokenC = await hre.ethers.deployContract("MyToken", ["My Token", "MTK", DECIMALS, MINTING_AMOUNT]);
+        myTokenC = await hre.ethers.deployContract("MyToken", ["MyToken", "MT", DECIMALS, MINTING_AMOUNT]);
         signers = await hre.ethers.getSigners();
     });
     describe("Basic state value check", () => {
         it("should return", async () => {
-            expect(await myTokenC.name()).to.equal("My Token");
+            expect(await myTokenC.name()).to.equal("MyToken");
         });
         it("should return", async () => {
-            expect(await myTokenC.symbol()).to.equal("MTK");
+            expect(await myTokenC.symbol()).to.equal("MT");
         });
         it("should return", async () => {
             expect(await myTokenC.decimals()).to.equal(DECIMALS);
@@ -27,9 +27,11 @@ describe("My Token", () => {
     })
     
     describe("Mint", () => {
-        it("should return 1MTK balance for signer 0", async () => {
+        it("should return initial supply + 1MTK balance for signer 0", async () => {
             const signer0 = signers[0];
-            expect(await myTokenC.balanceOf(signer0.address)).to.equal(MINTING_AMOUNT * 10n**DECIMALS);
+            const oneMt = hre.ethers.parseUnits("1", DECIMALS);
+            await myTokenC.mint(oneMt, signer0.address);
+            expect(await myTokenC.balanceOf(signer0.address)).to.equal(MINTING_AMOUNT * 10n**DECIMALS + oneMt);
         });
         
         //TDD : Test Driven Development
@@ -42,7 +44,7 @@ describe("My Token", () => {
     //1MTK = 10^18
 
     describe("Transfer", () => {
-        it("should have 0.5MTK", async () => {
+        it("should have 0.5MT", async () => {
             const signer0 = signers[0];
             const signer1 = signers[1];
             await expect(myTokenC.transfer(hre.ethers.parseUnits("0.5", DECIMALS), signer1.address)) //event check 앞에는 await
@@ -72,7 +74,7 @@ describe("My Token", () => {
         });
     });
     describe("Approve & TransferFrom homework", () => {
-        it("should transfer 7.77MTK from signer0 to signer1", async () => {
+        it("should transfer 7.77MT from signer0 to signer1", async () => {
             const signer0 = signers[0]; //0번째의 주소얻기
             const signer1 = signers[1]; //1번째의 얻기
             await expect(myTokenC.approve(signer1.address, hre.ethers.parseUnits("10", DECIMALS))) //10의 권한을 부여

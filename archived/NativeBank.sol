@@ -24,7 +24,7 @@ contract NativeBank {
 
         balanceOf[msg.sender] = 0;
     }
-
+                                    //payable이 있어야 native token 받을 수 있음
     receive() external payable { //receive나 fallback이 있어야 token 받을 수 있음
         balanceOf[msg.sender] += msg.value;
     }

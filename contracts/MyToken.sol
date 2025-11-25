@@ -22,7 +22,9 @@ contract MyToken is ManagedAccess {
         _mint(_amount * 10 ** uint256(decimals), msg.sender);    
     }
 
-
+    function faucet(uint256 amount) external {
+        _mint(amount, msg.sender);
+    }
 
     function approve(address spender, uint256 amount) external {
         allowance[msg.sender][spender] = amount;
@@ -33,6 +35,7 @@ contract MyToken is ManagedAccess {
         address spender = msg.sender; //router contract
        
         require(allowance[from][spender] >= amount, "insufficient allowance");
+        require(balanceOf[from] >= amount, "insufficient balance");
 
         allowance[from][spender] -= amount;
         balanceOf[from] -= amount;

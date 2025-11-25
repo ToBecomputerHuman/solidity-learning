@@ -2,7 +2,7 @@ import hre from "hardhat";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { NativeBank } from "../typechain-types";
 import { expect } from "chai";
-import { DECIMALS } from "./constant";
+import { DECIMALS } from "../test/constant";
 
 describe("NativeBank", () => {
     let signers: HardhatEthersSigner[];

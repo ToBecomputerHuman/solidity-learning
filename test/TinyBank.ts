@@ -11,7 +11,7 @@ describe("TinyBank", () => {
     beforeEach(async () => {
         signers = await hre.ethers.getSigners();
         myTokenC = await hre.ethers.deployContract("MyToken", [
-            "My Token", "MTK", DECIMALS, MINTING_AMOUNT
+            "MyToken", "MT", DECIMALS, MINTING_AMOUNT
         ]);
 
         TinyBankC = await hre.ethers.deployContract("TinyBank", [await myTokenC.getAddress()]);
@@ -33,7 +33,7 @@ describe("TinyBank", () => {
             const stakingAmount = hre.ethers.parseUnits("50", DECIMALS);
 
             await myTokenC.approve(TinyBankC.getAddress(), stakingAmount);
-            await TinyBankC.stake(stakingAmount);
+            await expect(TinyBankC.stake(stakingAmount)).to.emit(TinyBankC, "Staked").withArgs(signer0.address, stakingAmount);
 
             expect(await TinyBankC.staked(signer0.address)).to.equal(stakingAmount);
             expect(await TinyBankC.totalStaked()).to.equal(stakingAmount);
@@ -46,7 +46,7 @@ describe("TinyBank", () => {
             const stakingAmount = hre.ethers.parseUnits("50", DECIMALS);
             await myTokenC.approve(TinyBankC.getAddress(), stakingAmount);
             await TinyBankC.stake(stakingAmount);
-            await TinyBankC.withdraw(stakingAmount);
+            await expect(TinyBankC.withdraw(stakingAmount)).to.emit(TinyBankC, "Withdraw").withArgs(stakingAmount, signer0.address);
             expect(await TinyBankC.staked(signer0.address)).to.equal(0n);
         });
     });
