@@ -34,7 +34,7 @@ contract TinyBank is ManagedAccess {
     event Staked(address from, uint256 amount);
     event Withdraw(uint256 amount, address to);
 
-    IMyToken public stakingtoken; //MyToken contract type
+    IMyToken public stakingToken; //MyToken contract type
 
     mapping(address => uint256) public lastClaimedBlock; //유저가 지금까지 받은 보상
 
@@ -45,7 +45,7 @@ contract TinyBank is ManagedAccess {
     uint256 public totalStaked; //전체 예치된 양
 
     constructor(IMyToken _stakingToken) ManagedAccess(msg.sender, msg.sender) {
-        stakingtoken = _stakingToken;
+        stakingToken = _stakingToken;
         rewardPerBlock = defaultRewardPerBlock;
     }   
 
@@ -59,7 +59,7 @@ contract TinyBank is ManagedAccess {
         if (staked[to] > 0) {
             uint256 blocks = block.number - lastClaimedBlock[to];   
             uint256 reward = (blocks * rewardPerBlock * staked[to]) / totalStaked; //1MT/block
-            stakingtoken.mint(reward, to); //MyToken contract의 mint 호출
+            stakingToken.mint(reward, to); //MyToken contract의 mint 호출
         }
         
         lastClaimedBlock[to] = block.number;
@@ -71,7 +71,7 @@ contract TinyBank is ManagedAccess {
     function stake(uint256 _amount) external updateReward(msg.sender) {
         require(_amount >= 0, "cannot stake 0 amount");
         //MyToken contract의 approve가 먼저 호출되어야함
-        stakingtoken.transferFrom(msg.sender, address(this), _amount); //TinyBank contract로 토큰 전송
+        stakingToken.transferFrom(msg.sender, address(this), _amount); //TinyBank contract로 토큰 전송
         staked[msg.sender] += _amount;
         totalStaked += _amount;
         emit Staked(msg.sender, _amount);
@@ -79,7 +79,7 @@ contract TinyBank is ManagedAccess {
 
     function withdraw(uint256 _amount) external updateReward(msg.sender) {
         require(staked[msg.sender] >= _amount, "insufficient staked token");
-        stakingtoken.transfer(_amount, msg.sender); //TinyBank contract에서 토큰 전송
+        stakingToken.transfer(_amount, msg.sender); //TinyBank contract에서 토큰 전송
         staked[msg.sender] -= _amount;
         totalStaked -= _amount;
       
